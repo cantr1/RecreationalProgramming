@@ -1,0 +1,21 @@
+---
+- name: Setup SSH Force Command to Use Compiled Shell
+  hosts: localhost
+  become: true
+  gather_facts: false
+
+  tasks:
+  - name: Modify SSH Config
+    ansible.builtin.blockinfile:
+      path: /etc/ssh/sshd_config
+      block: |
+        Match User kelz
+          ForceCommand /home/kelz/shell
+    notify:
+      - Restart SSH
+
+  handlers:
+  - name: Restart SSH
+    ansible.builtin.service:
+      name: sshd
+      state: restarted
